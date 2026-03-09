@@ -16,6 +16,8 @@ import AdminDashboard from "./pages/AdminDashboard.tsx";
 import AdminUsers from "./pages/AdminUsers.tsx";
 import AdminContent from "./pages/AdminContent.tsx";
 import AdminReports from "./pages/AdminReports.tsx";
+import OutplayedLanding from "./pages/OutplayedLanding.tsx";
+import BrandDemo from "./pages/BrandDemo.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -40,6 +42,8 @@ const App = () => (
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/content" element={<AdminContent />} />
           <Route path="/admin/reports" element={<AdminReports />} />
+          <Route path="/outplayed" element={<OutplayedLanding />} />
+          <Route path="/brand-demo" element={<BrandDemo />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
