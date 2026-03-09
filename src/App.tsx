@@ -12,6 +12,10 @@ import MemberDashboard from "./pages/MemberDashboard.tsx";
 import OddsMatcher from "./pages/OddsMatcher.tsx";
 import Calculators from "./pages/Calculators.tsx";
 import ProfitTracker from "./pages/ProfitTracker.tsx";
+import AdminDashboard from "./pages/AdminDashboard.tsx";
+import AdminUsers from "./pages/AdminUsers.tsx";
+import AdminContent from "./pages/AdminContent.tsx";
+import AdminReports from "./pages/AdminReports.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -32,6 +36,10 @@ const App = () => (
           <Route path="/oddsmatcher" element={<OddsMatcher />} />
           <Route path="/calculators" element={<Calculators />} />
           <Route path="/profit-tracker" element={<ProfitTracker />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/content" element={<AdminContent />} />
+          <Route path="/admin/reports" element={<AdminReports />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
