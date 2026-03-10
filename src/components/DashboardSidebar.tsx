@@ -49,16 +49,25 @@ export function DashboardSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { isPremium, upgrade } = useAuth();
+  const { brand, brandId } = useBrand();
+
+  // Prefix dashboard URLs with /outplayed if on outplayed brand
+  const prefix = location.pathname.startsWith("/outplayed") ? "/outplayed" : "";
+  const navItems = allNavItems.map(item => ({ ...item, url: prefix + item.url }));
 
   return (
     <Sidebar collapsible="icon" className="border-r border-border bg-card">
       <SidebarContent className="pt-4">
         <div className={`px-4 mb-4 ${collapsed ? "px-2 text-center" : ""}`}>
           {collapsed ? (
-            <span className="font-display text-lg font-bold text-gradient">O</span>
+            <span className="font-display text-lg font-bold text-gradient">{brand.name[0]}</span>
           ) : (
-            <a href="/" className="font-display text-lg font-bold tracking-tight">
-              Odds<span className="text-gradient">Monkey</span>
+            <a href={brand.homeRoute} className="font-display text-lg font-bold tracking-tight">
+              {brandId === "outplayed" ? (
+                <span className="text-gradient">Outplayed</span>
+              ) : (
+                <>Odds<span className="text-gradient">Monkey</span></>
+              )}
             </a>
           )}
         </div>
