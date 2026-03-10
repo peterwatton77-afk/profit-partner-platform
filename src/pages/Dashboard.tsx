@@ -61,48 +61,56 @@ const Dashboard = () => {
   const { user, isPremium } = useAuth();
   const userName = user?.name || "User";
   const profitAmount = isPremium ? 1247.5 : 0;
+  const todayStr = new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 
   return (
     <DashboardLayout>
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Welcome + Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="md:col-span-2 glass-card p-6 relative overflow-hidden"
-          >
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.06),transparent_60%)]" />
-            <div className="relative">
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-6 relative overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.06),transparent_60%)]" />
+          <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
               <h1 className="font-display text-xl sm:text-2xl font-bold mb-1">
                 Welcome back, {userName}! 👋
               </h1>
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-sm">{todayStr}</p>
+              <p className="text-muted-foreground text-xs mt-1">
                 {isPremium ? "You have full access to all tools and offers." : "Upgrade to unlock all tools and maximise your profit."}
               </p>
+            </div>
+            <div className="flex items-center gap-2">
+              {isPremium && (
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-primary bg-primary/10 px-3 py-1.5 rounded-full">
+                  <Crown size={14} /> Premium Member
+                </span>
+              )}
               {!isPremium && (
-                <Button size="sm" className="mt-3 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold gap-1">
+                <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold gap-1">
                   <Crown size={14} /> Upgrade to Premium
                 </Button>
               )}
             </div>
-          </motion.div>
+          </div>
+        </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 }}
-            className="glass-card p-6 text-center relative overflow-hidden"
-          >
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.05),transparent_60%)]" />
-            <div className="relative">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium mb-2">Total Profit</p>
-              <p className="text-gradient font-display text-3xl sm:text-4xl font-bold">
-                <AnimatedProfit target={profitAmount} />
-              </p>
-              {isPremium && <p className="text-xs text-primary mt-1">+£340.00 this month</p>}
-            </div>
-          </motion.div>
+        {/* Stat Cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { label: "Total Profit", value: <AnimatedProfit target={profitAmount} />, sub: isPremium ? "All time" : "Start earning today" },
+            { label: "This Month", value: isPremium ? "£340.00" : "£0.00", sub: isPremium ? "+22% vs last month" : "—" },
+            { label: "Total Bets", value: isPremium ? "127" : "0", sub: isPremium ? "18 this week" : "Place your first bet" },
+            { label: "Best Day", value: isPremium ? "£85.20" : "—", sub: isPremium ? "14 Feb 2026" : "—" },
+          ].map((stat, i) => (
+            <motion.div key={stat.label} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 + i * 0.03 }} className="glass-card p-5 text-center relative overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.04),transparent_60%)]" />
+              <div className="relative">
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">{stat.label}</p>
+                <p className="text-gradient font-display text-2xl font-bold">{stat.value}</p>
+                <p className="text-[10px] text-muted-foreground mt-1">{stat.sub}</p>
+              </div>
+            </motion.div>
+          ))}
         </div>
 
         {/* Quick Tools */}

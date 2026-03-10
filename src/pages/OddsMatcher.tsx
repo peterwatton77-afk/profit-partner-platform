@@ -1,11 +1,15 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Crown, RefreshCw, ExternalLink, Lock } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { Crown, RefreshCw, ExternalLink, Lock, ChevronDown, Timer } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth } from "@/contexts/AuthContext";
+
+const ALL_BOOKMAKERS = ["Bet365", "William Hill", "Paddy Power", "Ladbrokes", "Coral", "SkyBet", "Betway", "888sport"];
 
 const mockData = [
   { event: "Man City vs Arsenal", time: "15:00", sport: "Football", bookmaker: "Bet365", backOdds: 2.1, exchange: "Betfair", layOdds: 2.12, rating: 98.2, profit: 4.85 },
@@ -39,16 +43,32 @@ const OddsMatcherPage = () => {
   const [sport, setSport] = useState("All");
   const [ratingFilter, setRatingFilter] = useState([60]);
   const [dateTab, setDateTab] = useState("Today");
+  const [selectedBookmakers, setSelectedBookmakers] = useState<string[]>(ALL_BOOKMAKERS);
+  const [refreshTimer, setRefreshTimer] = useState(165);
+
+  useEffect(() => {
+    if (!isPremium) return;
+    const interval = setInterval(() => setRefreshTimer(t => (t <= 0 ? 180 : t - 1)), 1000);
+    return () => clearInterval(interval);
+  }, [isPremium]);
+
+  const toggleBookmaker = (bk: string) => {
+    setSelectedBookmakers(prev => prev.includes(bk) ? prev.filter(b => b !== bk) : [...prev, bk]);
+  };
 
   const filtered = useMemo(() => {
     return mockData
       .filter(r => sport === "All" || r.sport === sport)
       .filter(r => r.rating >= ratingFilter[0])
+      .filter(r => selectedBookmakers.includes(r.bookmaker))
       .sort((a, b) => b.rating - a.rating);
-  }, [sport, ratingFilter]);
+  }, [sport, ratingFilter, selectedBookmakers]);
 
+  const totalMatches = 847;
   const visibleRows = isPremium ? filtered : filtered.slice(0, 5);
   const lockedCount = filtered.length - 5;
+  const mins = Math.floor(refreshTimer / 60);
+  const secs = refreshTimer % 60;
 
   return (
     <DashboardLayout>
@@ -60,9 +80,15 @@ const OddsMatcherPage = () => {
               <p className="text-sm text-muted-foreground">Find the best matched betting opportunities in real-time</p>
             </div>
             {isPremium && (
-              <div className="flex items-center gap-2 text-xs text-primary">
-                <RefreshCw size={14} className="animate-spin" style={{ animationDuration: "3s" }} />
-                Auto-refreshing
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-secondary/50 px-3 py-1.5 rounded-full">
+                  <Timer size={12} className="text-primary" />
+                  Next refresh: {mins}:{secs.toString().padStart(2, "0")}
+                </div>
+                <div className="flex items-center gap-1.5 text-xs text-primary">
+                  <RefreshCw size={14} className="animate-spin" style={{ animationDuration: "3s" }} />
+                  Auto-refreshing
+                </div>
               </div>
             )}
           </div>
@@ -70,31 +96,70 @@ const OddsMatcherPage = () => {
           {/* Filters */}
           <div className="glass-card p-4 mb-6">
             <div className="flex flex-wrap gap-4 items-end">
-              <div className="w-40">
-                <label className="text-xs text-muted-foreground mb-1 block">Sport</label>
-                <Select value={sport} onValueChange={setSport}>
-                  <SelectTrigger className="h-9 bg-secondary/50 border-border"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {["All", "Football", "Horse Racing", "Tennis"].map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+              {/* Sport filter tabs */}
+              <div>
+                <label className="text-xs text-muted-foreground mb-1.5 block">Sport</label>
+                <div className="flex gap-1">
+                  {["All", "Football", "Horse Racing", "Tennis", "Cricket"].map(s => (
+                    <button
+                      key={s}
+                      onClick={() => setSport(s)}
+                      className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${sport === s ? "bg-primary text-primary-foreground" : "bg-secondary/50 text-muted-foreground hover:text-foreground"}`}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="w-48">
-                <label className="text-xs text-muted-foreground mb-1 block">Min Rating: {ratingFilter[0]}%</label>
+
+              {/* Bookmaker multi-select */}
+              <div>
+                <label className="text-xs text-muted-foreground mb-1.5 block">Bookmaker</label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" size="sm" className="h-8 text-xs bg-secondary/50 border-border gap-1.5 min-w-[140px] justify-between">
+                      {selectedBookmakers.length === ALL_BOOKMAKERS.length ? "All Bookmakers" : `${selectedBookmakers.length} selected`}
+                      <ChevronDown size={12} />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-52 p-2" align="start">
+                    <div className="space-y-1">
+                      {ALL_BOOKMAKERS.map(bk => (
+                        <label key={bk} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-secondary/50 cursor-pointer text-sm">
+                          <Checkbox checked={selectedBookmakers.includes(bk)} onCheckedChange={() => toggleBookmaker(bk)} />
+                          {bk}
+                        </label>
+                      ))}
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              {/* Rating slider */}
+              <div className="w-44">
+                <label className="text-xs text-muted-foreground mb-1.5 block">Min Rating: {ratingFilter[0]}%</label>
                 <Slider value={ratingFilter} onValueChange={setRatingFilter} min={60} max={100} step={1} className="mt-2" />
               </div>
-              <div className="flex gap-1">
-                {["Today", "Tomorrow", "This Week"].map(d => (
-                  <button
-                    key={d}
-                    onClick={() => setDateTab(d)}
-                    className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${dateTab === d ? "bg-primary text-primary-foreground" : "bg-secondary/50 text-muted-foreground hover:text-foreground"}`}
-                  >
-                    {d}
-                  </button>
-                ))}
+
+              {/* Date tabs */}
+              <div>
+                <label className="text-xs text-muted-foreground mb-1.5 block">Date</label>
+                <div className="flex gap-1">
+                  {["Today", "Tomorrow", "This Week"].map(d => (
+                    <button
+                      key={d}
+                      onClick={() => setDateTab(d)}
+                      className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${dateTab === d ? "bg-primary text-primary-foreground" : "bg-secondary/50 text-muted-foreground hover:text-foreground"}`}
+                    >
+                      {d}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="text-xs text-muted-foreground ml-auto">{filtered.length} matches found</div>
+
+              <div className="text-xs text-muted-foreground ml-auto self-end">
+                Showing {filtered.length} of {totalMatches} matches
+              </div>
             </div>
           </div>
 

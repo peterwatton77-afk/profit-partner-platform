@@ -33,9 +33,13 @@ const allNavItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard, freeAccess: true },
   { title: "OddsMatcher", url: "/dashboard/oddsmatcher", icon: Crosshair, freeAccess: false },
   { title: "Each-Way Matcher", url: "/dashboard/eachway", icon: Activity, freeAccess: false },
+  { title: "BOG Matcher", url: "/dashboard/bog-matcher", icon: TrendingUp, freeAccess: false },
+  { title: "Acca Matcher", url: "/dashboard/acca-matcher", icon: Zap, freeAccess: false },
+  { title: "Casino Offers", url: "/dashboard/casino-offers", icon: Gift, freeAccess: false },
   { title: "Calculators", url: "/dashboard/calculators", icon: Calculator, freeAccess: false },
   { title: "Profit Tracker", url: "/dashboard/profit-tracker", icon: BarChart3, freeAccess: false },
   { title: "Guides", url: "/dashboard/guides", icon: BookOpen, freeAccess: true },
+  { title: "Account", url: "/dashboard/account", icon: User, freeAccess: true },
 ];
 
 export function DashboardSidebar() {
