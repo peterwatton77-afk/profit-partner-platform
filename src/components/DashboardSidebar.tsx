@@ -78,7 +78,7 @@ export function DashboardSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {allNavItems.map((item) => {
+              {navItems.map((item) => {
                 const isLocked = !isPremium && !item.freeAccess;
                 return (
                   <SidebarMenuItem key={item.title}>
@@ -99,7 +99,7 @@ export function DashboardSidebar() {
                       ) : (
                         <NavLink
                           to={item.url}
-                          end={item.url === "/dashboard"}
+                          end={item.url === prefix + "/dashboard"}
                           className="flex items-center gap-2 px-3 py-2 rounded-md text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors"
                           activeClassName="bg-primary/10 text-primary font-medium"
                         >
