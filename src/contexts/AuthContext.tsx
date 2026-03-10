@@ -10,7 +10,9 @@ interface AuthContextType {
   user: User | null;
   login: (email: string, name?: string) => void;
   logout: () => void;
+  upgrade: () => void;
   isAuthenticated: boolean;
+  isPremium: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,13 +31,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [user]);
 
   const login = (email: string, name?: string) => {
-    setUser({ name: name || email.split("@")[0], email, plan: "free" });
+    const isPrem = email.toLowerCase().includes("premium");
+    setUser({ name: name || email.split("@")[0], email, plan: isPrem ? "premium" : "free" });
   };
 
   const logout = () => setUser(null);
 
+  const upgrade = () => {
+    if (user) setUser({ ...user, plan: "premium" });
+  };
+
+  const isPremium = user?.plan === "premium";
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, login, logout, upgrade, isAuthenticated: !!user, isPremium }}>
       {children}
     </AuthContext.Provider>
   );
