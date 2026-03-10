@@ -13,9 +13,12 @@ interface AuthContextType {
   upgrade: () => void;
   isAuthenticated: boolean;
   isPremium: boolean;
+  isAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+const ADMIN_EMAILS = ["admin@oddsmonkey.com"];
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(() => {
@@ -42,9 +45,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const isPremium = user?.plan === "premium";
+  const isAdmin = !!user && ADMIN_EMAILS.includes(user.email.toLowerCase());
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, upgrade, isAuthenticated: !!user, isPremium }}>
+    <AuthContext.Provider value={{ user, login, logout, upgrade, isAuthenticated: !!user, isPremium, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );
