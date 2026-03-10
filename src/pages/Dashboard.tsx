@@ -1,16 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
-  ArrowRight,
-  TrendingUp,
-  Crown,
-  Zap,
-  Crosshair,
-  Calculator,
-  BarChart3,
-  Activity,
-  Gift,
-  Clock,
+  ArrowRight, TrendingUp, Crown, Zap, Crosshair, Calculator, BarChart3, Activity, Gift, Clock,
 } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth } from "@/contexts/AuthContext";
@@ -66,30 +57,18 @@ const Dashboard = () => {
   return (
     <DashboardLayout>
       <div className="max-w-6xl mx-auto space-y-6">
-        {/* Welcome + Stats */}
+        {/* Welcome */}
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-6 relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.06),transparent_60%)]" />
           <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h1 className="font-display text-xl sm:text-2xl font-bold mb-1">
-                Welcome back, {userName}! 👋
-              </h1>
+              <h1 className="font-display text-xl sm:text-2xl font-bold mb-1">Welcome back, {userName}! 👋</h1>
               <p className="text-muted-foreground text-sm">{todayStr}</p>
-              <p className="text-muted-foreground text-xs mt-1">
-                {isPremium ? "You have full access to all tools and offers." : "Upgrade to unlock all tools and maximise your profit."}
-              </p>
+              <p className="text-muted-foreground text-xs mt-1">{isPremium ? "You have full access to all tools and offers." : "Upgrade to unlock all tools and maximise your profit."}</p>
             </div>
             <div className="flex items-center gap-2">
-              {isPremium && (
-                <span className="inline-flex items-center gap-1 text-xs font-semibold text-primary bg-primary/10 px-3 py-1.5 rounded-full">
-                  <Crown size={14} /> Premium Member
-                </span>
-              )}
-              {!isPremium && (
-                <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold gap-1">
-                  <Crown size={14} /> Upgrade to Premium
-                </Button>
-              )}
+              {isPremium && <span className="inline-flex items-center gap-1 text-xs font-semibold text-primary bg-primary/10 px-3 py-1.5 rounded-full"><Crown size={14} /> Premium Member</span>}
+              {!isPremium && <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold gap-1"><Crown size={14} /> Upgrade to Premium</Button>}
             </div>
           </div>
         </motion.div>
@@ -130,16 +109,9 @@ const Dashboard = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           {/* Today's Offers */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 }}
-            className="lg:col-span-3 glass-card p-6"
-          >
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="lg:col-span-3 glass-card p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-display text-lg font-semibold flex items-center gap-2">
-                <Gift size={18} className="text-primary" /> Today's Top Offers
-              </h2>
+              <h2 className="font-display text-lg font-semibold flex items-center gap-2"><Gift size={18} className="text-primary" /> Today's Top Offers</h2>
               <span className="text-xs text-muted-foreground">{topOffers.length} available</span>
             </div>
             <div className="space-y-3">
@@ -162,15 +134,8 @@ const Dashboard = () => {
           </motion.div>
 
           {/* Recent Activity */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="lg:col-span-2 glass-card p-6"
-          >
-            <h2 className="font-display text-lg font-semibold mb-4 flex items-center gap-2">
-              <Clock size={18} className="text-primary" /> Recent Activity
-            </h2>
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="lg:col-span-2 glass-card p-6">
+            <h2 className="font-display text-lg font-semibold mb-4 flex items-center gap-2"><Clock size={18} className="text-primary" /> Recent Activity</h2>
             <div className="space-y-4">
               {recentActivity.map((item, i) => (
                 <div key={i} className="flex items-start justify-between">
@@ -179,9 +144,7 @@ const Dashboard = () => {
                     <p className="text-xs text-muted-foreground truncate">{item.detail}</p>
                     <p className="text-[10px] text-muted-foreground mt-0.5">{item.time}</p>
                   </div>
-                  <span className={`text-sm font-bold shrink-0 ml-2 ${item.amount.startsWith("+") ? "text-primary" : "text-destructive"}`}>
-                    {item.amount}
-                  </span>
+                  <span className={`text-sm font-bold shrink-0 ml-2 ${item.amount.startsWith("+") ? "text-primary" : "text-destructive"}`}>{item.amount}</span>
                 </div>
               ))}
             </div>
