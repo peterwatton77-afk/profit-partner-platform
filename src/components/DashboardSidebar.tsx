@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useBrand } from "@/contexts/BrandContext";
 
 const allNavItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard, freeAccess: true },
