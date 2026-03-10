@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, TrendingUp, Shield, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const AnimatedCounter = ({ target, prefix = "", suffix = "" }: { target: number; prefix?: string; suffix?: string }) => {
   const [count, setCount] = useState(0);
@@ -33,8 +34,7 @@ const AnimatedCounter = ({ target, prefix = "", suffix = "" }: { target: number;
 const HeroSection = () => {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden pt-16">
-      {/* Background effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(152_72%_46%/0.08),transparent_50%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.08),transparent_50%)]" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full bg-primary/5 blur-[120px]" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
@@ -77,12 +77,14 @@ const HeroSection = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
           >
-            <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold text-base px-8 h-12 gap-2">
-              Start Free Today
-              <ArrowRight size={18} />
+            <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold text-base px-8 h-12 gap-2" asChild>
+              <Link to="/register">
+                Start Free Today
+                <ArrowRight size={18} />
+              </Link>
             </Button>
-            <Button size="lg" variant="outline" className="border-border text-foreground hover:bg-secondary font-semibold text-base px-8 h-12">
-              See How It Works
+            <Button size="lg" variant="outline" className="border-border text-foreground hover:bg-secondary font-semibold text-base px-8 h-12" asChild>
+              <Link to="/how-it-works">See How It Works</Link>
             </Button>
           </motion.div>
 

@@ -1,43 +1,13 @@
 import { motion } from "framer-motion";
-import { Activity, BarChart3, Calculator, Crosshair, TrendingUp, Zap } from "lucide-react";
+import { Activity, BarChart3, Calculator, Crosshair, TrendingUp, Zap, Gift, Dices } from "lucide-react";
 
 const tools = [
-  {
-    icon: Crosshair,
-    name: "OddsMatcher",
-    description: "Real-time odds matching engine scanning thousands of markets across all major bookmakers and exchanges.",
-    tag: "Core",
-  },
-  {
-    icon: Activity,
-    name: "Racing Matcher",
-    description: "Specialised horse racing matcher with BOG and extra place integration for maximum racing profit.",
-    tag: "Core",
-  },
-  {
-    icon: TrendingUp,
-    name: "Each Way Pro",
-    description: "Advanced each way betting system with extra place matching and EV calculations built in.",
-    tag: "Advanced",
-  },
-  {
-    icon: Zap,
-    name: "2UP Matcher",
-    description: "Dedicated matching tool for early payout promotions. Find the best 2UP opportunities instantly.",
-    tag: "Core",
-  },
-  {
-    icon: Calculator,
-    name: "Calculator Suite",
-    description: "Matched betting, each way, arbitrage and early payout calculators — all in one place.",
-    tag: "Essential",
-  },
-  {
-    icon: BarChart3,
-    name: "Profit Tracker",
-    description: "Log every bet, track per-bookie performance, and see your running profit with detailed breakdowns.",
-    tag: "Essential",
-  },
+  { icon: Crosshair, name: "OddsMatcher", description: "Real-time odds matching engine scanning thousands of markets across all major bookmakers and exchanges.", tag: "Core" },
+  { icon: Activity, name: "Each-Way Matcher", description: "Advanced each way betting system with extra place matching and EV calculations built in.", tag: "Advanced" },
+  { icon: TrendingUp, name: "BOG Matcher", description: "Best Odds Guaranteed matcher finding the most profitable horse racing opportunities with BOG offers.", tag: "Core" },
+  { icon: Zap, name: "Acca Matcher", description: "Accumulator matching tool to extract value from acca insurance and acca boost promotions.", tag: "Advanced" },
+  { icon: Gift, name: "Casino Offers", description: "Curated casino offers with expected value calculations. Low-risk strategies for casino bonuses.", tag: "Premium" },
+  { icon: BarChart3, name: "Profit Tracker", description: "Log every bet, track per-bookie performance, and see your running profit with detailed breakdowns.", tag: "Essential" },
 ];
 
 const ToolsSection = () => {
@@ -67,7 +37,7 @@ const ToolsSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.08, duration: 0.5 }}
-              className="glass-card p-6 group hover:border-primary/30 transition-all hover:shadow-[0_0_30px_-8px_hsl(152_72%_46%/0.15)]"
+              className="glass-card p-6 group hover:border-primary/30 transition-all"
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">

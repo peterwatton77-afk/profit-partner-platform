@@ -2,27 +2,11 @@ import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 
 const testimonials = [
-  {
-    name: "James T.",
-    profit: "£4,200",
-    period: "in 3 months",
-    text: "I was sceptical at first, but OddsMonkey made it so easy. The OddsMatcher does all the hard work — I just follow the steps. Absolutely life-changing extra income.",
-    avatar: "JT",
-  },
-  {
-    name: "Sarah K.",
-    profit: "£1,800",
-    period: "first month",
-    text: "The guides walked me through everything from scratch. I had zero betting experience and made nearly two grand in my first month. The profit tracker keeps me motivated.",
-    avatar: "SK",
-  },
-  {
-    name: "Mark D.",
-    profit: "£12,500",
-    period: "in 6 months",
-    text: "Been matched betting for six months now. Each Way Pro and the racing matcher are incredible tools. This has genuinely replaced my part-time job income.",
-    avatar: "MD",
-  },
+  { name: "James T.", profit: "£4,200", period: "in 3 months", text: "I was sceptical at first, but OddsMonkey made it so easy. The OddsMatcher does all the hard work — I just follow the steps. Absolutely life-changing extra income.", avatar: "JT" },
+  { name: "Sarah K.", profit: "£1,800", period: "first month", text: "The guides walked me through everything from scratch. I had zero betting experience and made nearly two grand in my first month. The profit tracker keeps me motivated.", avatar: "SK" },
+  { name: "Mark D.", profit: "£12,500", period: "in 6 months", text: "Been matched betting for six months now. Each Way Pro and the racing matcher are incredible tools. This has genuinely replaced my part-time job income.", avatar: "MD" },
+  { name: "Emma W.", profit: "£2,400", period: "in 2 months", text: "As a uni student, this has been a game changer. I do it between lectures and make more than most part-time jobs. The calculator tools make everything foolproof.", avatar: "EW" },
+  { name: "David R.", profit: "£8,900", period: "in 4 months", text: "The reload offers keep the profit coming month after month. I was worried it would dry up but there are always new offers. The community is brilliant too.", avatar: "DR" },
 ];
 
 const TestimonialsSection = () => {
@@ -44,14 +28,14 @@ const TestimonialsSection = () => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {testimonials.map((t, i) => (
             <motion.div
               key={t.name}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
+              transition={{ delay: (i % 3) * 0.1, duration: 0.5 }}
               className="glass-card p-6 sm:p-8"
             >
               <div className="flex gap-1 mb-4">
