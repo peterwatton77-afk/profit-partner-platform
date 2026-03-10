@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { BrandProvider } from "@/contexts/BrandContext";
 import Index from "./pages/Index.tsx";
 import Register from "./pages/Register.tsx";
 import Login from "./pages/Login.tsx";
@@ -38,32 +39,40 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/verify-email" element={<VerifyEmail />} />
-            <Route path="/onboarding" element={<Onboarding />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/dashboard/oddsmatcher" element={<OddsMatcher />} />
-            <Route path="/dashboard/eachway" element={<EachWayMatcher />} />
-            <Route path="/dashboard/calculators" element={<Calculators />} />
-            <Route path="/dashboard/profit-tracker" element={<ProfitTracker />} />
-            <Route path="/dashboard/guides" element={<GuidesPage />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/users" element={<AdminUsers />} />
-            <Route path="/admin/offers" element={<AdminOffers />} />
-            <Route path="/admin/content" element={<AdminContent />} />
-            <Route path="/admin/reports" element={<AdminReports />} />
-            <Route path="/outplayed" element={<OutplayedLanding />} />
-            <Route path="/brand-demo" element={<BrandDemo />} />
-            <Route path="/how-it-works" element={<HowItWorksPage />} />
-            <Route path="/what-is-matched-betting" element={<WhatIsMatchedBetting />} />
-            <Route path="/pricing" element={<PricingPage />} />
-            <Route path="/testimonials" element={<TestimonialsPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <BrandProvider>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/verify-email" element={<VerifyEmail />} />
+              <Route path="/onboarding" element={<Onboarding />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/dashboard/oddsmatcher" element={<OddsMatcher />} />
+              <Route path="/dashboard/eachway" element={<EachWayMatcher />} />
+              <Route path="/dashboard/calculators" element={<Calculators />} />
+              <Route path="/dashboard/profit-tracker" element={<ProfitTracker />} />
+              <Route path="/dashboard/guides" element={<GuidesPage />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/users" element={<AdminUsers />} />
+              <Route path="/admin/offers" element={<AdminOffers />} />
+              <Route path="/admin/content" element={<AdminContent />} />
+              <Route path="/admin/reports" element={<AdminReports />} />
+              <Route path="/outplayed" element={<OutplayedLanding />} />
+              <Route path="/outplayed/dashboard" element={<Dashboard />} />
+              <Route path="/outplayed/dashboard/oddsmatcher" element={<OddsMatcher />} />
+              <Route path="/outplayed/dashboard/eachway" element={<EachWayMatcher />} />
+              <Route path="/outplayed/dashboard/calculators" element={<Calculators />} />
+              <Route path="/outplayed/dashboard/profit-tracker" element={<ProfitTracker />} />
+              <Route path="/outplayed/dashboard/guides" element={<GuidesPage />} />
+              <Route path="/brand-demo" element={<BrandDemo />} />
+              <Route path="/how-it-works" element={<HowItWorksPage />} />
+              <Route path="/what-is-matched-betting" element={<WhatIsMatchedBetting />} />
+              <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/testimonials" element={<TestimonialsPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrandProvider>
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>

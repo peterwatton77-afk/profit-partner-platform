@@ -53,9 +53,17 @@ const Footer = () => {
           <p className="text-xs text-muted-foreground">
             © {new Date().getFullYear()} OddsMonkey. All rights reserved.
           </p>
-          <p className="text-xs text-muted-foreground">
-            18+ only. Please gamble responsibly.
-          </p>
+          <div className="flex items-center gap-4">
+            <Link to="/outplayed" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+              Switch to Outplayed →
+            </Link>
+            <Link to="/brand-demo" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+              Brand Demo
+            </Link>
+            <p className="text-xs text-muted-foreground">
+              18+ only. Please gamble responsibly.
+            </p>
+          </div>
         </div>
       </div>
     </footer>
