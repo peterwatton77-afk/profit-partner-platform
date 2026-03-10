@@ -29,7 +29,11 @@ const Login = () => {
     e.preventDefault();
     if (!validate()) return;
     setLoading(true);
-    setTimeout(() => setLoading(false), 1500);
+    setTimeout(() => {
+      login(email);
+      setLoading(false);
+      navigate("/dashboard");
+    }, 1000);
   };
 
   return (
