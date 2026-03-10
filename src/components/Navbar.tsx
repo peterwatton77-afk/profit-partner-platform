@@ -2,12 +2,13 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const navLinks = [
-  { label: "How It Works", href: "#how-it-works" },
-  { label: "Tools", href: "#tools" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "Testimonials", href: "#testimonials" },
+  { label: "How It Works", href: "/how-it-works" },
+  { label: "What Is Matched Betting?", href: "/what-is-matched-betting" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "Testimonials", href: "/testimonials" },
 ];
 
 const Navbar = () => {
@@ -16,29 +17,29 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 h-16">
-        <a href="#" className="font-display text-xl font-bold tracking-tight">
+        <Link to="/" className="font-display text-xl font-bold tracking-tight">
           Odds<span className="text-gradient">Monkey</span>
-        </a>
+        </Link>
 
         {/* Desktop */}
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.label}
-              href={link.href}
+              to={link.href}
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </div>
 
         <div className="hidden md:flex items-center gap-3">
-          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-            Log In
+          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground" asChild>
+            <Link to="/login">Log In</Link>
           </Button>
-          <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
-            Start Free
+          <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold" asChild>
+            <Link to="/register">Start Free</Link>
           </Button>
         </div>
 
@@ -62,21 +63,21 @@ const Navbar = () => {
           >
             <div className="px-4 py-4 flex flex-col gap-3">
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.label}
-                  href={link.href}
+                  to={link.href}
                   className="text-sm text-muted-foreground hover:text-foreground py-2"
                   onClick={() => setMobileOpen(false)}
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
               <div className="flex gap-3 pt-2 border-t border-border">
-                <Button variant="ghost" size="sm" className="flex-1 text-muted-foreground">
-                  Log In
+                <Button variant="ghost" size="sm" className="flex-1 text-muted-foreground" asChild>
+                  <Link to="/login" onClick={() => setMobileOpen(false)}>Log In</Link>
                 </Button>
-                <Button size="sm" className="flex-1 bg-primary text-primary-foreground font-semibold">
-                  Start Free
+                <Button size="sm" className="flex-1 bg-primary text-primary-foreground font-semibold" asChild>
+                  <Link to="/register" onClick={() => setMobileOpen(false)}>Start Free</Link>
                 </Button>
               </div>
             </div>

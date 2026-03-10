@@ -1,21 +1,25 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { ArrowRight, Eye, EyeOff } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [promoCode, setPromoCode] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const validate = () => {
     const e: Record<string, string> = {};
@@ -34,7 +38,11 @@ const Register = () => {
     e.preventDefault();
     if (!validate()) return;
     setLoading(true);
-    setTimeout(() => setLoading(false), 1500);
+    setTimeout(() => {
+      login(email, name);
+      setLoading(false);
+      navigate("/onboarding");
+    }, 1000);
   };
 
   return (
@@ -114,6 +122,17 @@ const Register = () => {
               </button>
             </div>
             {errors.password && <p className="text-destructive text-xs mt-1">{errors.password}</p>}
+          </div>
+
+          <div>
+            <Label htmlFor="promo" className="text-sm font-medium mb-1.5 block">Promo Code <span className="text-muted-foreground font-normal">(optional)</span></Label>
+            <Input
+              id="promo"
+              placeholder="Enter promo code"
+              value={promoCode}
+              onChange={(e) => setPromoCode(e.target.value)}
+              className="h-11 bg-secondary/50 border-border"
+            />
           </div>
 
           <div className="space-y-3 pt-1">

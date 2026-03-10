@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,8 +10,11 @@ import {
   Circle,
   Crown,
   Zap,
+  Square,
+  CheckSquare,
 } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
+import { useAuth } from "@/contexts/AuthContext";
 
 const journeySteps = [
   { title: "Understand matched betting", description: "Learn the fundamentals of how matched betting works", done: false, active: true },
@@ -32,27 +36,121 @@ const guides = [
   { title: "Your First Matched Bet Walkthrough", description: "Step-by-step guide to placing your very first matched bet and locking in profit.", time: "10 min read", free: true },
 ];
 
+const AnimatedProfit = ({ target }: { target: number }) => {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    const duration = 1500;
+    const steps = 40;
+    const inc = target / steps;
+    let current = 0;
+    const timer = setInterval(() => {
+      current += inc;
+      if (current >= target) { setCount(target); clearInterval(timer); }
+      else setCount(Math.floor(current * 100) / 100);
+    }, duration / steps);
+    return () => clearInterval(timer);
+  }, [target]);
+  return <span className="text-gradient font-display text-4xl font-bold">£{count.toFixed(2)}</span>;
+};
+
 const Dashboard = () => {
+  const { user } = useAuth();
+  const userName = user?.name || "John";
   const completedSteps = 0;
   const progressPercent = (completedSteps / journeySteps.length) * 100;
+
+  const [checklist, setChecklist] = useState([
+    { id: "profile", label: "Complete your profile", done: false },
+    { id: "firstbet", label: "Make your first matched bet", done: false },
+    { id: "calculator", label: "Use the calculator", done: false },
+    { id: "track", label: "Track your first profit", done: false },
+  ]);
+
+  const toggleCheck = (id: string) => {
+    setChecklist((prev) => prev.map((c) => c.id === id ? { ...c, done: !c.done } : c));
+  };
 
   return (
     <DashboardLayout>
       <div className="max-w-5xl mx-auto space-y-6">
-        {/* Welcome Banner */}
+        {/* Upgrade Banner */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass-card p-6 sm:p-8 relative overflow-hidden"
+          className="glass-card glow-border p-4 flex flex-col sm:flex-row items-center justify-between gap-3"
         >
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(152_72%_46%/0.06),transparent_60%)]" />
-          <div className="relative">
-            <h1 className="font-display text-xl sm:text-2xl font-bold mb-1">
-              Welcome back, John! 👋
-            </h1>
-            <p className="text-muted-foreground text-sm">
-              Start your matched betting journey and make your first risk-free profit.
+          <div className="flex items-center gap-3">
+            <Crown size={20} className="text-primary" />
+            <p className="text-sm font-medium">
+              Upgrade to <span className="text-primary font-semibold">Premium</span> for full access to all tools and offers
             </p>
+          </div>
+          <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold gap-1 shrink-0">
+            Upgrade Now <ArrowRight size={14} />
+          </Button>
+        </motion.div>
+
+        {/* Welcome + Profit */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="glass-card p-6 sm:p-8 relative overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.06),transparent_60%)]" />
+            <div className="relative">
+              <h1 className="font-display text-xl sm:text-2xl font-bold mb-1">
+                Welcome back, {userName}! 👋
+              </h1>
+              <p className="text-muted-foreground text-sm">
+                Start your matched betting journey and make your first risk-free profit.
+              </p>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 }}
+            className="glass-card p-6 sm:p-8 text-center relative overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.05),transparent_60%)]" />
+            <div className="relative">
+              <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wider font-medium">Total Profit</p>
+              <AnimatedProfit target={0} />
+              <p className="text-xs text-muted-foreground mt-2">Start earning with your first matched bet</p>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Checklist */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.08 }}
+          className="glass-card p-6"
+        >
+          <h2 className="font-display text-lg font-semibold mb-4 flex items-center gap-2">
+            <CheckSquare size={18} className="text-primary" />
+            Getting Started Checklist
+          </h2>
+          <div className="space-y-2">
+            {checklist.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => toggleCheck(item.id)}
+                className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors text-left ${item.done ? "opacity-60" : "hover:bg-secondary/50"}`}
+              >
+                {item.done ? (
+                  <CheckSquare size={18} className="text-primary shrink-0" />
+                ) : (
+                  <Square size={18} className="text-muted-foreground/40 shrink-0" />
+                )}
+                <span className={`text-sm ${item.done ? "line-through text-muted-foreground" : "font-medium"}`}>
+                  {item.label}
+                </span>
+              </button>
+            ))}
           </div>
         </motion.div>
 
@@ -73,7 +171,6 @@ const Dashboard = () => {
             </span>
           </div>
 
-          {/* Progress bar */}
           <div className="h-2 bg-muted rounded-full mb-6 overflow-hidden">
             <div
               className="h-full bg-primary rounded-full transition-all duration-500"
@@ -86,11 +183,7 @@ const Dashboard = () => {
               <div
                 key={i}
                 className={`flex items-start gap-3 p-3 rounded-lg transition-colors ${
-                  step.active
-                    ? "bg-primary/5 border border-primary/20"
-                    : step.done
-                    ? "opacity-60"
-                    : "opacity-40"
+                  step.active ? "bg-primary/5 border border-primary/20" : step.done ? "opacity-60" : "opacity-40"
                 }`}
               >
                 <div className="mt-0.5 shrink-0">
@@ -130,7 +223,6 @@ const Dashboard = () => {
             </h2>
 
             <div className="relative">
-              {/* Blurred table */}
               <div className="blur-[3px] pointer-events-none select-none">
                 <table className="w-full text-xs">
                   <thead>
@@ -154,7 +246,6 @@ const Dashboard = () => {
                 </table>
               </div>
 
-              {/* Overlay CTA */}
               <div className="absolute inset-0 flex items-center justify-center bg-card/60 backdrop-blur-[1px] rounded-lg">
                 <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold gap-2 shadow-lg">
                   <Crown size={16} />
@@ -182,18 +273,16 @@ const Dashboard = () => {
             </div>
 
             <div className="glass-card p-5 text-center relative overflow-hidden">
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(152_72%_46%/0.05),transparent_60%)]" />
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.05),transparent_60%)]" />
               <div className="relative">
                 <p className="text-gradient font-display text-4xl font-bold mb-1">£500+</p>
                 <p className="text-xs text-muted-foreground">Average first-month profit</p>
               </div>
             </div>
 
-            <Button className="mt-5 w-full bg-primary text-primary-foreground hover:bg-primary/90 font-semibold gap-2" asChild>
-              <a href="#pricing">
-                <Crown size={16} />
-                Start Free Trial
-              </a>
+            <Button className="mt-5 w-full bg-primary text-primary-foreground hover:bg-primary/90 font-semibold gap-2">
+              <Crown size={16} />
+              Start Free Trial
             </Button>
           </motion.div>
         </div>
@@ -231,7 +320,7 @@ const Dashboard = () => {
           transition={{ delay: 0.35 }}
           className="glass-card glow-border p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-4 relative overflow-hidden"
         >
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,hsl(152_72%_46%/0.06),transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,hsl(var(--primary)/0.06),transparent_50%)]" />
           <div className="relative text-center sm:text-left">
             <h3 className="font-display text-lg font-bold mb-1">
               Unlock Full Access
