@@ -1,11 +1,15 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Crown, RefreshCw, ExternalLink, Lock } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { Crown, RefreshCw, ExternalLink, Lock, ChevronDown, Timer } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth } from "@/contexts/AuthContext";
+
+const ALL_BOOKMAKERS = ["Bet365", "William Hill", "Paddy Power", "Ladbrokes", "Coral", "SkyBet", "Betway", "888sport"];
 
 const mockData = [
   { event: "Man City vs Arsenal", time: "15:00", sport: "Football", bookmaker: "Bet365", backOdds: 2.1, exchange: "Betfair", layOdds: 2.12, rating: 98.2, profit: 4.85 },
