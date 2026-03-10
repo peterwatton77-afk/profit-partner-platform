@@ -18,6 +18,7 @@ import ProfitTracker from "./pages/ProfitTracker.tsx";
 import GuidesPage from "./pages/GuidesPage.tsx";
 import AdminDashboard from "./pages/AdminDashboard.tsx";
 import AdminUsers from "./pages/AdminUsers.tsx";
+import AdminOffers from "./pages/AdminOffers.tsx";
 import AdminContent from "./pages/AdminContent.tsx";
 import AdminReports from "./pages/AdminReports.tsx";
 import OutplayedLanding from "./pages/OutplayedLanding.tsx";
@@ -52,6 +53,7 @@ const App = () => (
             <Route path="/dashboard/guides" element={<GuidesPage />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<AdminUsers />} />
+            <Route path="/admin/offers" element={<AdminOffers />} />
             <Route path="/admin/content" element={<AdminContent />} />
             <Route path="/admin/reports" element={<AdminReports />} />
             <Route path="/outplayed" element={<OutplayedLanding />} />
