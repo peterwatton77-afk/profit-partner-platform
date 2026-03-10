@@ -11,10 +11,11 @@ import ForgotPassword from "./pages/ForgotPassword.tsx";
 import VerifyEmail from "./pages/VerifyEmail.tsx";
 import Onboarding from "./pages/Onboarding.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
-import MemberDashboard from "./pages/MemberDashboard.tsx";
 import OddsMatcher from "./pages/OddsMatcher.tsx";
+import EachWayMatcher from "./pages/EachWayMatcher.tsx";
 import Calculators from "./pages/Calculators.tsx";
 import ProfitTracker from "./pages/ProfitTracker.tsx";
+import GuidesPage from "./pages/GuidesPage.tsx";
 import AdminDashboard from "./pages/AdminDashboard.tsx";
 import AdminUsers from "./pages/AdminUsers.tsx";
 import AdminContent from "./pages/AdminContent.tsx";
@@ -44,10 +45,11 @@ const App = () => (
             <Route path="/verify-email" element={<VerifyEmail />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/member-dashboard" element={<MemberDashboard />} />
-            <Route path="/oddsmatcher" element={<OddsMatcher />} />
-            <Route path="/calculators" element={<Calculators />} />
-            <Route path="/profit-tracker" element={<ProfitTracker />} />
+            <Route path="/dashboard/oddsmatcher" element={<OddsMatcher />} />
+            <Route path="/dashboard/eachway" element={<EachWayMatcher />} />
+            <Route path="/dashboard/calculators" element={<Calculators />} />
+            <Route path="/dashboard/profit-tracker" element={<ProfitTracker />} />
+            <Route path="/dashboard/guides" element={<GuidesPage />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<AdminUsers />} />
             <Route path="/admin/content" element={<AdminContent />} />

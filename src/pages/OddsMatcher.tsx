@@ -1,221 +1,184 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ChevronLeft, ChevronRight, Filter } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
+import { Crown, RefreshCw, ExternalLink, Lock } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
+import { useAuth } from "@/contexts/AuthContext";
 
-const allBookmakers = ["Bet365", "William Hill", "Paddy Power", "Ladbrokes", "Sky Bet", "Coral", "Betfair Sportsbook", "BetVictor", "888sport", "Unibet"];
-
-const mockRows = [
-  { match: "Man City vs Arsenal", sport: "Football", bookmaker: "Bet365", backOdds: 2.10, exchange: "Betfair", layOdds: 2.12, rating: 98.2, profit: 8.50, tier: "Core" },
-  { match: "Liverpool vs Chelsea", sport: "Football", bookmaker: "William Hill", backOdds: 3.50, exchange: "Smarkets", layOdds: 3.54, rating: 97.8, profit: 6.20, tier: "Core" },
-  { match: "14:30 Cheltenham R3", sport: "Horse Racing", bookmaker: "Paddy Power", backOdds: 5.00, exchange: "Betfair", layOdds: 5.10, rating: 97.5, profit: 12.40, tier: "Advanced" },
-  { match: "Tottenham vs Man Utd", sport: "Football", bookmaker: "Ladbrokes", backOdds: 1.85, exchange: "Betfair", layOdds: 1.87, rating: 97.3, profit: 4.80, tier: "Core" },
-  { match: "15:00 Ascot R5", sport: "Horse Racing", bookmaker: "Sky Bet", backOdds: 8.00, exchange: "Smarkets", layOdds: 8.20, rating: 96.9, profit: 15.00, tier: "Advanced" },
-  { match: "Djokovic vs Alcaraz", sport: "Tennis", bookmaker: "Coral", backOdds: 1.72, exchange: "Betfair", layOdds: 1.74, rating: 96.7, profit: 3.90, tier: "Core" },
-  { match: "Everton vs West Ham", sport: "Football", bookmaker: "Betfair Sportsbook", backOdds: 2.90, exchange: "Smarkets", layOdds: 2.96, rating: 96.5, profit: 5.50, tier: "Essential" },
-  { match: "16:10 York R6", sport: "Horse Racing", bookmaker: "BetVictor", backOdds: 4.50, exchange: "Betfair", layOdds: 4.60, rating: 96.2, profit: 9.30, tier: "Advanced" },
-  { match: "Sinner vs Medvedev", sport: "Tennis", bookmaker: "888sport", backOdds: 1.55, exchange: "Betfair", layOdds: 1.57, rating: 95.8, profit: 2.10, tier: "Essential" },
-  { match: "Newcastle vs Brighton", sport: "Football", bookmaker: "Unibet", backOdds: 2.25, exchange: "Smarkets", layOdds: 2.30, rating: 95.5, profit: 7.00, tier: "Core" },
+const mockData = [
+  { event: "Man City vs Arsenal", time: "15:00", sport: "Football", bookmaker: "Bet365", backOdds: 2.1, exchange: "Betfair", layOdds: 2.12, rating: 98.2, profit: 4.85 },
+  { event: "Liverpool vs Chelsea", time: "17:30", sport: "Football", bookmaker: "William Hill", backOdds: 3.5, exchange: "Smarkets", layOdds: 3.54, rating: 97.8, profit: 3.2 },
+  { event: "Tottenham vs Man Utd", time: "12:30", sport: "Football", bookmaker: "Paddy Power", backOdds: 1.85, exchange: "Betfair", layOdds: 1.87, rating: 97.5, profit: 6.1 },
+  { event: "Wolves vs Everton", time: "15:00", sport: "Football", bookmaker: "Ladbrokes", backOdds: 2.4, exchange: "Smarkets", layOdds: 2.44, rating: 96.9, profit: 2.9 },
+  { event: "Newcastle vs Brighton", time: "20:00", sport: "Football", bookmaker: "Coral", backOdds: 1.95, exchange: "Betfair", layOdds: 1.98, rating: 96.5, profit: 5.4 },
+  { event: "Ascot 14:20 — Thunder Storm", time: "14:20", sport: "Horse Racing", bookmaker: "SkyBet", backOdds: 5.0, exchange: "Betfair", layOdds: 5.1, rating: 95.8, profit: 8.2 },
+  { event: "Cheltenham 15:40 — Silver Arrow", time: "15:40", sport: "Horse Racing", bookmaker: "Bet365", backOdds: 3.25, exchange: "Smarkets", layOdds: 3.3, rating: 95.2, profit: 4.6 },
+  { event: "Kempton 16:10 — Lucky Strike", time: "16:10", sport: "Horse Racing", bookmaker: "Betway", backOdds: 7.0, exchange: "Betfair", layOdds: 7.2, rating: 94.5, profit: 6.8 },
+  { event: "Djokovic vs Alcaraz", time: "13:00", sport: "Tennis", bookmaker: "888sport", backOdds: 1.65, exchange: "Betfair", layOdds: 1.67, rating: 94.1, profit: 7.3 },
+  { event: "Sinner vs Medvedev", time: "15:30", sport: "Tennis", bookmaker: "Unibet", backOdds: 2.2, exchange: "Smarkets", layOdds: 2.24, rating: 93.8, profit: 3.5 },
+  { event: "Aston Villa vs West Ham", time: "15:00", sport: "Football", bookmaker: "Betway", backOdds: 2.8, exchange: "Betfair", layOdds: 2.86, rating: 93.2, profit: 2.1 },
+  { event: "Crystal Palace vs Fulham", time: "15:00", sport: "Football", bookmaker: "888sport", backOdds: 2.15, exchange: "Smarkets", layOdds: 2.2, rating: 92.7, profit: 4.0 },
+  { event: "Aintree 13:50 — Brave Heart", time: "13:50", sport: "Horse Racing", bookmaker: "Coral", backOdds: 4.5, exchange: "Betfair", layOdds: 4.6, rating: 92.1, profit: 5.5 },
+  { event: "Sabalenka vs Swiatek", time: "11:00", sport: "Tennis", bookmaker: "Bet365", backOdds: 1.9, exchange: "Betfair", layOdds: 1.94, rating: 91.5, profit: 6.0 },
+  { event: "Bournemouth vs Nottm Forest", time: "15:00", sport: "Football", bookmaker: "Unibet", backOdds: 2.6, exchange: "Smarkets", layOdds: 2.68, rating: 90.8, profit: 1.8 },
+  { event: "York 14:40 — Golden Dawn", time: "14:40", sport: "Horse Racing", bookmaker: "William Hill", backOdds: 6.0, exchange: "Betfair", layOdds: 6.2, rating: 89.5, profit: 7.1 },
+  { event: "Brentford vs Leicester", time: "17:30", sport: "Football", bookmaker: "SkyBet", backOdds: 1.75, exchange: "Smarkets", layOdds: 1.79, rating: 88.2, profit: 5.8 },
+  { event: "Fritz vs Rune", time: "16:00", sport: "Tennis", bookmaker: "Paddy Power", backOdds: 2.05, exchange: "Betfair", layOdds: 2.12, rating: 86.5, profit: 2.4 },
+  { event: "Burnley vs Southampton", time: "20:00", sport: "Football", bookmaker: "Ladbrokes", backOdds: 2.3, exchange: "Betfair", layOdds: 2.38, rating: 84.1, profit: 1.5 },
+  { event: "Newmarket 15:10 — Flash Point", time: "15:10", sport: "Horse Racing", bookmaker: "Betway", backOdds: 8.0, exchange: "Smarkets", layOdds: 8.4, rating: 82.0, profit: 3.9 },
+  { event: "Sheffield Utd vs Luton", time: "15:00", sport: "Football", bookmaker: "Coral", backOdds: 1.6, exchange: "Betfair", layOdds: 1.66, rating: 78.5, profit: 0.9 },
+  { event: "Doncaster 16:30 — Night Fury", time: "16:30", sport: "Horse Racing", bookmaker: "888sport", backOdds: 11.0, exchange: "Betfair", layOdds: 11.8, rating: 72.3, profit: 2.2 },
 ];
 
-const tierColors: Record<string, string> = {
-  Core: "bg-primary/10 text-primary",
-  Advanced: "bg-amber-500/10 text-amber-400",
-  Essential: "bg-blue-400/10 text-blue-400",
-};
+const getRatingColor = (r: number) => r >= 85 ? "bg-primary/20 text-primary" : r >= 70 ? "bg-amber-500/20 text-amber-400" : "bg-destructive/20 text-destructive";
 
-const OddsMatcher = () => {
+const OddsMatcherPage = () => {
+  const { isPremium } = useAuth();
   const [sport, setSport] = useState("All");
-  const [bookmaker, setBookmaker] = useState("All");
-  const [minOdds, setMinOdds] = useState("");
-  const [maxOdds, setMaxOdds] = useState("");
-  const [minRating, setMinRating] = useState("");
-  const [page, setPage] = useState(1);
-  const perPage = 5;
+  const [ratingFilter, setRatingFilter] = useState([60]);
+  const [dateTab, setDateTab] = useState("Today");
 
   const filtered = useMemo(() => {
-    return mockRows.filter((r) => {
-      if (sport !== "All" && r.sport !== sport) return false;
-      if (bookmaker !== "All" && r.bookmaker !== bookmaker) return false;
-      if (minOdds && r.backOdds < parseFloat(minOdds)) return false;
-      if (maxOdds && r.backOdds > parseFloat(maxOdds)) return false;
-      if (minRating && r.rating < parseFloat(minRating)) return false;
-      return true;
-    });
-  }, [sport, bookmaker, minOdds, maxOdds, minRating]);
+    return mockData
+      .filter(r => sport === "All" || r.sport === sport)
+      .filter(r => r.rating >= ratingFilter[0])
+      .sort((a, b) => b.rating - a.rating);
+  }, [sport, ratingFilter]);
 
-  const totalPages = Math.ceil(filtered.length / perPage);
-  const paged = filtered.slice((page - 1) * perPage, page * perPage);
+  const visibleRows = isPremium ? filtered : filtered.slice(0, 5);
+  const lockedCount = filtered.length - 5;
 
   return (
-    <DashboardLayout premium>
-      <div className="max-w-6xl mx-auto space-y-6">
+    <DashboardLayout>
+      <div className="max-w-7xl mx-auto space-y-6">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 className="font-display text-xl sm:text-2xl font-bold mb-1">OddsMatcher</h1>
-          <p className="text-muted-foreground text-sm mb-6">Find the best matched betting opportunities in real-time.</p>
-        </motion.div>
-
-        {/* Filter Bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.05 }}
-          className="glass-card p-4"
-        >
-          <div className="flex items-center gap-2 mb-3 text-sm text-muted-foreground">
-            <Filter size={14} />
-            <span className="font-medium">Filters</span>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-            <Select value={sport} onValueChange={(v) => { setSport(v); setPage(1); }}>
-              <SelectTrigger className="h-9 bg-secondary/50 border-border text-sm">
-                <SelectValue placeholder="Sport" />
-              </SelectTrigger>
-              <SelectContent>
-                {["All", "Football", "Horse Racing", "Tennis"].map((s) => (
-                  <SelectItem key={s} value={s}>{s}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={bookmaker} onValueChange={(v) => { setBookmaker(v); setPage(1); }}>
-              <SelectTrigger className="h-9 bg-secondary/50 border-border text-sm">
-                <SelectValue placeholder="Bookmaker" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="All">All Bookmakers</SelectItem>
-                {allBookmakers.map((b) => (
-                  <SelectItem key={b} value={b}>{b}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Input
-              placeholder="Min odds"
-              type="number"
-              step="0.01"
-              value={minOdds}
-              onChange={(e) => { setMinOdds(e.target.value); setPage(1); }}
-              className="h-9 bg-secondary/50 border-border text-sm"
-            />
-            <Input
-              placeholder="Max odds"
-              type="number"
-              step="0.01"
-              value={maxOdds}
-              onChange={(e) => { setMaxOdds(e.target.value); setPage(1); }}
-              className="h-9 bg-secondary/50 border-border text-sm"
-            />
-            <Input
-              placeholder="Min rating %"
-              type="number"
-              step="0.1"
-              value={minRating}
-              onChange={(e) => { setMinRating(e.target.value); setPage(1); }}
-              className="h-9 bg-secondary/50 border-border text-sm"
-            />
-          </div>
-        </motion.div>
-
-        {/* Results Table */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="glass-card overflow-hidden"
-        >
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border text-xs text-muted-foreground">
-                  <th className="text-left py-3 px-4 font-medium">Match</th>
-                  <th className="text-left py-3 px-4 font-medium hidden md:table-cell">Bookmaker</th>
-                  <th className="text-right py-3 px-4 font-medium">Back</th>
-                  <th className="text-right py-3 px-4 font-medium">Lay</th>
-                  <th className="text-right py-3 px-4 font-medium">Rating</th>
-                  <th className="text-right py-3 px-4 font-medium hidden sm:table-cell">Profit</th>
-                  <th className="text-center py-3 px-4 font-medium hidden lg:table-cell">Tier</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paged.map((row, i) => (
-                  <tr key={i} className="border-b border-border/50 last:border-0 hover:bg-muted/30 transition-colors">
-                    <td className="py-3 px-4">
-                      <p className="font-medium text-xs">{row.match}</p>
-                      <p className="text-[10px] text-muted-foreground md:hidden">{row.bookmaker}</p>
-                    </td>
-                    <td className="py-3 px-4 text-xs text-muted-foreground hidden md:table-cell">{row.bookmaker}</td>
-                    <td className="py-3 px-4 text-xs text-right text-primary font-semibold">{row.backOdds.toFixed(2)}</td>
-                    <td className="py-3 px-4 text-xs text-right">
-                      <span className="text-muted-foreground">{row.layOdds.toFixed(2)}</span>
-                      <span className="text-[10px] text-muted-foreground/60 ml-1 hidden md:inline">({row.exchange})</span>
-                    </td>
-                    <td className="py-3 px-4 text-xs text-right font-bold text-primary">{row.rating.toFixed(1)}%</td>
-                    <td className="py-3 px-4 text-xs text-right font-semibold hidden sm:table-cell">£{row.profit.toFixed(2)}</td>
-                    <td className="py-3 px-4 text-center hidden lg:table-cell">
-                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${tierColors[row.tier]}`}>
-                        {row.tier}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-                {paged.length === 0 && (
-                  <tr>
-                    <td colSpan={7} className="py-12 text-center text-sm text-muted-foreground">
-                      No matches found. Try adjusting your filters.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between px-4 py-3 border-t border-border">
-              <span className="text-xs text-muted-foreground">
-                Showing {(page - 1) * perPage + 1}–{Math.min(page * perPage, filtered.length)} of {filtered.length}
-              </span>
-              <div className="flex items-center gap-1">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  disabled={page === 1}
-                  onClick={() => setPage(page - 1)}
-                >
-                  <ChevronLeft size={16} />
-                </Button>
-                {Array.from({ length: totalPages }, (_, i) => (
-                  <Button
-                    key={i}
-                    variant={page === i + 1 ? "default" : "ghost"}
-                    size="icon"
-                    className={`h-8 w-8 text-xs ${page === i + 1 ? "bg-primary text-primary-foreground" : ""}`}
-                    onClick={() => setPage(i + 1)}
-                  >
-                    {i + 1}
-                  </Button>
-                ))}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  disabled={page === totalPages}
-                  onClick={() => setPage(page + 1)}
-                >
-                  <ChevronRight size={16} />
-                </Button>
-              </div>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="font-display text-2xl font-bold">OddsMatcher</h1>
+              <p className="text-sm text-muted-foreground">Find the best matched betting opportunities in real-time</p>
             </div>
-          )}
+            {isPremium && (
+              <div className="flex items-center gap-2 text-xs text-primary">
+                <RefreshCw size={14} className="animate-spin" style={{ animationDuration: "3s" }} />
+                Auto-refreshing
+              </div>
+            )}
+          </div>
+
+          {/* Filters */}
+          <div className="glass-card p-4 mb-6">
+            <div className="flex flex-wrap gap-4 items-end">
+              <div className="w-40">
+                <label className="text-xs text-muted-foreground mb-1 block">Sport</label>
+                <Select value={sport} onValueChange={setSport}>
+                  <SelectTrigger className="h-9 bg-secondary/50 border-border"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {["All", "Football", "Horse Racing", "Tennis"].map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="w-48">
+                <label className="text-xs text-muted-foreground mb-1 block">Min Rating: {ratingFilter[0]}%</label>
+                <Slider value={ratingFilter} onValueChange={setRatingFilter} min={60} max={100} step={1} className="mt-2" />
+              </div>
+              <div className="flex gap-1">
+                {["Today", "Tomorrow", "This Week"].map(d => (
+                  <button
+                    key={d}
+                    onClick={() => setDateTab(d)}
+                    className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${dateTab === d ? "bg-primary text-primary-foreground" : "bg-secondary/50 text-muted-foreground hover:text-foreground"}`}
+                  >
+                    {d}
+                  </button>
+                ))}
+              </div>
+              <div className="text-xs text-muted-foreground ml-auto">{filtered.length} matches found</div>
+            </div>
+          </div>
+
+          {/* Table */}
+          <div className="glass-card overflow-hidden rounded-xl">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border bg-secondary/30">
+                    <th className="text-left p-3 font-medium text-muted-foreground">Match / Event</th>
+                    <th className="text-left p-3 font-medium text-muted-foreground">Time</th>
+                    <th className="text-left p-3 font-medium text-muted-foreground">Bookmaker</th>
+                    <th className="text-center p-3 font-medium text-muted-foreground">Back</th>
+                    <th className="text-center p-3 font-medium text-muted-foreground">Lay</th>
+                    <th className="text-center p-3 font-medium text-muted-foreground">Rating</th>
+                    <th className="text-right p-3 font-medium text-muted-foreground">Profit Est.</th>
+                    <th className="text-center p-3 font-medium text-muted-foreground">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {visibleRows.map((row, i) => (
+                    <tr key={i} className="border-b border-border/50 hover:bg-secondary/20 transition-colors">
+                      <td className="p-3">
+                        <span className="font-medium">{row.event}</span>
+                        <span className="block text-[10px] text-muted-foreground">{row.sport}</span>
+                      </td>
+                      <td className="p-3 text-muted-foreground">{row.time}</td>
+                      <td className="p-3 font-medium">{row.bookmaker}</td>
+                      <td className="p-3 text-center text-primary font-semibold">{row.backOdds.toFixed(2)}</td>
+                      <td className="p-3 text-center">{row.layOdds.toFixed(2)}<span className="block text-[10px] text-muted-foreground">{row.exchange}</span></td>
+                      <td className="p-3 text-center">
+                        <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${getRatingColor(row.rating)}`}>
+                          {row.rating.toFixed(1)}%
+                        </span>
+                      </td>
+                      <td className="p-3 text-right font-semibold text-primary">£{row.profit.toFixed(2)}</td>
+                      <td className="p-3 text-center">
+                        <Button size="sm" variant="outline" className="h-7 text-xs gap-1 border-primary/30 text-primary hover:bg-primary/10">
+                          Open <ExternalLink size={10} />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {!isPremium && lockedCount > 0 && (
+              <div className="relative">
+                <div className="blur-[4px] pointer-events-none select-none">
+                  <table className="w-full text-sm">
+                    <tbody>
+                      {filtered.slice(5, 8).map((row, i) => (
+                        <tr key={i} className="border-b border-border/50">
+                          <td className="p-3">{row.event}</td>
+                          <td className="p-3">{row.time}</td>
+                          <td className="p-3">{row.bookmaker}</td>
+                          <td className="p-3 text-center">{row.backOdds}</td>
+                          <td className="p-3 text-center">{row.layOdds}</td>
+                          <td className="p-3 text-center">{row.rating}%</td>
+                          <td className="p-3 text-right">£{row.profit}</td>
+                          <td className="p-3 text-center">Open</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="absolute inset-0 flex items-center justify-center bg-card/70 backdrop-blur-[2px]">
+                  <div className="text-center">
+                    <Lock size={24} className="text-muted-foreground mx-auto mb-2" />
+                    <p className="font-display font-semibold mb-1">Upgrade to see all {filtered.length} matches</p>
+                    <p className="text-xs text-muted-foreground mb-3">Free users can see 5 results</p>
+                    <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold gap-2">
+                      <Crown size={16} /> Unlock All Results
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </motion.div>
       </div>
     </DashboardLayout>
   );
 };
 
-export default OddsMatcher;
+export default OddsMatcherPage;
